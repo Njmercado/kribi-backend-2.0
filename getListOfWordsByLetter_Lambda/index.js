@@ -2,11 +2,12 @@ const connectToDatabase = require("./db.js").connectToDatabase;
 
 async function findListOfWordsByLetter({ db, letter = "", limit = 1, page = 0 }) {
 
-  const fieldsToFilterSearch = { 'palabra': { $regex: items } }
+  const fieldsToFilterSearch = { 'palabra': { $regex: letter } }
   const fieldsToSelect = { 'projection': { 'palabra': 1, 'popularidad': 1, 'definicion': 1, 'ejemplos': 1 } }
 
   return await db.collection('Palabra').find(fieldsToFilterSearch, fieldsToSelect)
-    .skip(page)
+    .sort({"palabra": 1})
+    .skip(page*limit)
     .limit(limit)
     .toArray();
 };
@@ -22,6 +23,7 @@ exports.handler = async (event, context) => {
   const response = await findListOfWordsByLetter({ db, letter, limit: 10, page: parseInt(page) })
 
   return {
+    isBase64Encoded: false,
     status: 200,
     body: JSON.stringify(response),
     headers: {
