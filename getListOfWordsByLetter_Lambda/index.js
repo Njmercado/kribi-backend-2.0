@@ -22,7 +22,11 @@ exports.handler = async (event, context) => {
   const response = await findListOfWordsByLetter({ db, letter, limit: 10, page: parseInt(page) })
 
   return {
-    statusCode: 200,
+    status: 200,
     body: JSON.stringify(response),
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
   };
 };
