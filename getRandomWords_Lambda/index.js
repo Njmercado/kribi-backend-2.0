@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
       }
     }
   } catch (error) {
-    console.error("ERROR: ", error);
+    console.error(error);
     return {
       isBase64Encoded: false,
       status: 500,
