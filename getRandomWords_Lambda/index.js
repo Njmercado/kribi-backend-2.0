@@ -1,19 +1,21 @@
 const { connectToDatabase } = require("./db");
 const { INTERNAL_SERVER_ERROR } = require("./general.constant");
 
-async function getRandomWords({ db, cuantity = 1 }) {
-  return await db.collection('Palabra').aggregate([{ $sample: { size: parseInt(cuantity) } }]).toArray();
+async function getRandomWords({ db, quantity = 10 }) {
+  return await db.collection('Palabra').aggregate([{ $sample: { size: parseInt(quantity) } }]).toArray();
 }
 
 exports.handler = async (event, context) => {
   try {
-    const { cuantity } = event.queryStringParameters;
+    const { quantity } = event.queryStringParameters;
+    console.log('QUANTITY', quantity);
 
     context.callbackWaitsForEmptyEventLoop = false;
 
     const db = await connectToDatabase()
 
-    const response = await getRandomWords({ db, cuantity });
+    const response = await getRandomWords({ db, quantity });
+    console.log('RESPONSE: ', response)
 
     return {
       isBase64Encoded: false,

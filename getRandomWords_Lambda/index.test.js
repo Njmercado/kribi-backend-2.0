@@ -14,7 +14,7 @@ beforeEach(() => {
 test('should call random words handler and get a 200 response', async () => {
   const EVENT = {
     queryStringParameters: {
-      cuantity: 10
+      quantity: 10
     }
   }
 
@@ -40,7 +40,7 @@ test('should call random words handler and get a 200 response', async () => {
 test('should call random words handler and get a 500 response', async () => {
   const EVENT = {
     queryStringParameters: {
-      cuantity: 10
+      quantity: 10
     }
   }
 
