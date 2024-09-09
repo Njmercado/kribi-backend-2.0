@@ -1,0 +1,33 @@
+name: deploy get list of words by letter lambda
+
+on:
+  push:
+    paths:
+      - 'getListOfWordsByLetter_Lambda/**'
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: cd getListOfWordsByLetter_Lambda && yarn
+      - name: Run tests
+        run: cd getListOfWordsByLetter_Lambda && yarn test
+      - name: Install zip tools
+        uses: montudor/action-zip@v0.1.0
+      - name: Zip the lambda
+        run:  cd getListOfWordsByLetter_Lambda && zip -r getListOfWordsByLetter.zip .
+      - name: AWS CLI V2
+        uses: imehedi/actions-awscli-v2@latest
+        with:
+          args: "lambda update-function-code \
+            --function-name arn:aws:lambda:us-east-2:590184059304:function:getListOfWordsByLetter \
+            --zip-file fileb://getListOfWordsByLetter_Lambda/getListOfWordsByLetter.zip"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-2"
