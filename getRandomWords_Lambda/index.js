@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
     return {
       isBase64Encoded: false,
       status: 500,
-      body: JSON.stringify({ message: 'Internal server error' }),
+      body: JSON.stringify({ message: 'Internal server errors' }),
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
