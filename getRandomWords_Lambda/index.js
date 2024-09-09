@@ -19,7 +19,7 @@ exports.handler = async (event, context) => {
 
     return {
       isBase64Encoded: false,
-      status: 200,
+      statusCode: 200,
       body: JSON.stringify(response),
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ exports.handler = async (event, context) => {
     console.error(error);
     return {
       isBase64Encoded: false,
-      status: 500,
+      statusCode: 500,
       body: JSON.stringify(INTERNAL_SERVER_ERROR),
       headers: {
         'Content-Type': 'application/json',
