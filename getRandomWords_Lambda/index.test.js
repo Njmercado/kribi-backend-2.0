@@ -1,4 +1,5 @@
 const db = require('./db');
+const { INTERNAL_SERVER_ERROR } = require('./general.constant');
 const randomWordsLambda = require('./index').handler;
 const DB_MOCK = require('./db.mock').DB_MOCK;
 const RECORDS = require('./db.mock').RECORDS;
@@ -54,7 +55,7 @@ test('should call random words handler and get a 500 response', async () => {
   expect(RESPONSE).toEqual({
     isBase64Encoded: false,
     status: 500,
-    body: JSON.stringify({ message: 'Internal server error' }),
+    body: JSON.stringify(INTERNAL_SERVER_ERROR),
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
