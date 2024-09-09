@@ -28,7 +28,7 @@ test('should call random words handler and get a 200 response', async () => {
 
   expect(RESPONSE).toEqual({
     isBase64Encoded: false,
-    status: 200,
+    statusCode: 200,
     body: JSON.stringify(RECORDS),
     headers: {
       'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ test('should call random words handler and get a 500 response', async () => {
 
   expect(RESPONSE).toEqual({
     isBase64Encoded: false,
-    status: 500,
+    statusCode: 500,
     body: JSON.stringify(INTERNAL_SERVER_ERROR),
     headers: {
       'Content-Type': 'application/json',
