@@ -1,8 +1,9 @@
 const db = require('./db');
-const { INTERNAL_SERVER_ERROR } = require('./general.constant');
+const { WRONG_ENDPOINT_EMPTY_ID } = require('./general.constant');
 const putWordLambda = require('./index').handler;
 const DB_MOCK = require('./db.mock').DB_MOCK;
-const WORD_UPDATED = require('./db.mock').WORD_UPDATED;
+const WORD_UPDATED = require('./index.mock').WORD_UPDATED;
+const EVENT_PUT_WORD = require('./index.mock').EVENT_PUT_WORD;
 
 jest.mock('./db');
 
@@ -12,24 +13,18 @@ beforeEach(() => {
 })
 
 test('should call put word and get a 200 response', async () => {
-  const EVENT = {
-    body: JSON.stringify({
-      word: 'word'
-    })
-  }
-
   const CONTEXT = {
     callbackWaitsForEmptyEventLoop: false
   }
 
   db.connectToDatabase.mockResolvedValue(DB_MOCK);
 
-  const RESPONSE = await putWordLambda(EVENT, CONTEXT);
+  const RESPONSE = await putWordLambda(EVENT_PUT_WORD, CONTEXT);
 
   expect(RESPONSE).toEqual({
     isBase64Encoded: false,
     statusCode: 200,
-    body: JSON.stringify(WORD_UPDATED),
+    body: WORD_UPDATED,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'
