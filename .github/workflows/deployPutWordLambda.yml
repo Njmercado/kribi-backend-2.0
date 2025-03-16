@@ -1,0 +1,33 @@
+name: deploy putWord lambda
+
+on:
+  push:
+    paths:
+      - 'putWord_Lambda/**'
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: cd putWord_Lambda && yarn
+      - name: Run tests
+        run: cd putWord_Lambda && yarn test
+      - name: Install zip tools
+        uses: montudor/action-zip@v0.1.0
+      - name: Zip the lambda
+        run:  cd putWord_Lambda && zip -r putWord.zip .
+      - name: AWS CLI V2
+        uses: imehedi/actions-awscli-v2@latest
+        with:
+          args: "lambda update-function-code \
+            --function-name arn:aws:lambda:us-east-2:590184059304:function:putWord \
+            --zip-file fileb://putWord_Lambda/putWord.zip"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-2"
