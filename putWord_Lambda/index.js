@@ -1,11 +1,12 @@
 const { connectToDatabase } = require('./db');
 const { WRONG_ENDPOINT_EMPTY_ID } = require("./general.constant");
+const { ObjectId } = require('mongodb').ObjectId;
 
 async function putWord({ db, id, word }) {
   return await db
     .collection('Palabra')
     .updateOne(
-      { _id: id },
+      { _id: new ObjectId(id) },
       { $set: { ...word } },
       { upsert: false}
     );
@@ -14,7 +15,10 @@ async function putWord({ db, id, word }) {
 exports.handler = async (event, context) => {
   try {
 
-    if(!event._id || event._id == -1) {
+    const word = JSON.parse(event.body);
+    console.log('WORD: ', word);
+
+    if(!word._id || word._id == -1) {
       throw new Error(WRONG_ENDPOINT_EMPTY_ID.message);
     }
 
@@ -22,10 +26,10 @@ exports.handler = async (event, context) => {
 
     const db = await connectToDatabase()
 
-    const id = event._id;
-    delete event._id;
+    const id = word._id;
+    delete word._id;
 
-    const response = await putWord({ db, id, word: event });
+    const response = await putWord({ db, id, word });
     console.log('RESPONSE: ', response)
 
     return {
