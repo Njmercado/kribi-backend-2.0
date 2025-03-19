@@ -1,7 +1,9 @@
 const WORD_UPDATED = 'Word updated correctly';
 const EVENT_PUT_WORD = {
-  _id: "1",
-  word: 'word'
+  body: JSON.stringify({
+    _id: 1,
+    word: 'word'
+  })
 }
 
 exports.WORD_UPDATED = WORD_UPDATED;

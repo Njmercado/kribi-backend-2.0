@@ -1,6 +1,6 @@
 const { connectToDatabase } = require('./db');
 const { WRONG_ENDPOINT_EMPTY_ID } = require("./general.constant");
-const { ObjectId } = require('mongodb').ObjectId;
+const ObjectId = require('mongodb').ObjectId;
 
 async function putWord({ db, id, word }) {
   return await db
