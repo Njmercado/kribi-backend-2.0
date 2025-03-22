@@ -1,5 +1,5 @@
 const { connectToDatabase } = require('./db');
-const { WRONG_ENDPOINT_EMPTY_ID } = require("./general.constant");
+const { API_ERRORS } = require("./general.constant");
 const ObjectId = require('mongodb').ObjectId;
 
 async function putWord({ db, id, word }) {
@@ -16,10 +16,9 @@ exports.handler = async (event, context) => {
   try {
 
     const word = JSON.parse(event.body);
-    console.log('WORD: ', word);
 
     if(!word._id || word._id == -1) {
-      throw new Error(WRONG_ENDPOINT_EMPTY_ID.message);
+      throw new Error(API_ERRORS.WRONG_ENDPOINT_EMPTY_ID);
     }
 
     context.callbackWaitsForEmptyEventLoop = false;
@@ -29,8 +28,7 @@ exports.handler = async (event, context) => {
     const id = word._id;
     delete word._id;
 
-    const response = await putWord({ db, id, word });
-    console.log('RESPONSE: ', response)
+    await putWord({ db, id, word });
 
     return {
       isBase64Encoded: false,
@@ -46,8 +44,8 @@ exports.handler = async (event, context) => {
     console.error(error);
     return {
       isBase64Encoded: false,
-      statusCode: 500,
-      body: JSON.stringify(error),
+      statusCode: error.code ?? API_ERRORS.INTERNAL_SERVER_ERROR.code,
+      body: JSON.stringify(error.message ?? API_ERRORS.INTERNAL_SERVER_ERROR),
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
