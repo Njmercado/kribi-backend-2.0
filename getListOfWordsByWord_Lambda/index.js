@@ -22,32 +22,48 @@ async function findListOfWordsByWords({ db, words = [] }) {
       { "definicion": { $in: words } }
     ]
   }
-  const fieldsToSelect = { 'projection': { 'palabra': 1, 'popularidad': 1, 'definicion': 1, 'ejemplos': 1 } }
+  const fieldsToSelect = { 'projection': { 'palabra': 1, 'popularidad': 1, 'definicion': 1, 'ejemplos': 1, 'traducciones': 1 } }
 
-  return await db.collection('Palabra').find(fieldsToFilterSearch, fieldsToSelect)
+  return await db
+    .collection('Palabra')
+    .find(fieldsToFilterSearch, fieldsToSelect)
     .sort({ "palabra": 1 })
     .toArray();
 }
 
 exports.handler = async (event, context) => {
-  const { words } = event.queryStringParameters;
-  const splittedWords = words.split(',');
-  const wordsAsArray = splittedWords.map(word => word.trim());
-  const wordsAsRegex = getWordsAsRegex(wordsAsArray);
+  try {
 
-  context.callbackWaitsForEmptyEventLoop = false;
+    const { words } = event.queryStringParameters;
+    const splittedWords = words.split(',');
+    const wordsAsArray = splittedWords.map(word => word.trim());
+    const wordsAsRegex = getWordsAsRegex(wordsAsArray);
 
-  const db = await connectToDatabase();
+    context.callbackWaitsForEmptyEventLoop = false;
 
-  const response = await findListOfWordsByWords({ db, words: wordsAsRegex})
+    const db = await connectToDatabase();
 
-  return {
-    isBase64Encoded: false,
-    statusCode: 200,
-    body: JSON.stringify(response),
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
+    const response = await findListOfWordsByWords({ db, words: wordsAsRegex })
+
+    return {
+      isBase64Encoded: false,
+      statusCode: 200,
+      body: JSON.stringify(response),
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      isBase64Encoded: false,
+      statusCode: error.code ?? 500,
+      body: JSON.stringify(error.message ?? 'Internal Server Error'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     }
-  };
+  }
 }
